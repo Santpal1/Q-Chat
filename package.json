@@ -1,0 +1,16 @@
+{
+  "name": "quantum_chat",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"cd quantum-chat-frontend && npm run dev\" \"cd backend && python app.py\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "quantum_chat": "file:"
+  }
+}

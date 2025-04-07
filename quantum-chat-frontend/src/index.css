@@ -1,0 +1,587 @@
+:root {
+  --bg-main: #0f0f1a;
+  --bg-alt: #1a1a2e;
+  --panel-bg: rgba(24, 24, 36, 0.8);
+  --text-color: #ffffff;
+  --bubble-sent: linear-gradient(135deg, #00f6ff, #2bffcb);
+  --bubble-received: linear-gradient(135deg, #27273a, #1f1f2e);
+  --input-bg: #1e293b;
+  --input-focus-bg: #334155;
+  --button-bg: linear-gradient(145deg, #00ffe0, #006aff);
+  --button-hover: linear-gradient(145deg, #00b7ff, #0051d4);
+  --box-glow: #0ff;
+  --font-family: 'Segoe UI', sans-serif;
+  --highlight: #72f9ff;
+  --danger: #ff6b6b;
+  --success: #26ff9c;
+  --sender-color: #94a3b8;
+  --quantum-bg: #0d1117;
+}
+
+/* Light Mode (Toggle later via JS or class) */
+body.light {
+  --bg-main: #f3f4f6;
+  --bg-alt: #e5e7eb;
+  --panel-bg: #ffffff;
+  --text-color: #1e293b;
+  --bubble-sent: linear-gradient(135deg, #bae6fd, #7dd3fc);
+  --bubble-received: linear-gradient(135deg, #d1d5db, #9ca3af);
+  --input-bg: #e2e8f0;
+  --input-focus-bg: #cbd5e1;
+  --button-bg: linear-gradient(145deg, #38bdf8, #2563eb);
+  --button-hover: linear-gradient(145deg, #0ea5e9, #1d4ed8);
+  --box-glow: #38bdf8;
+  --text-color: #0f172a;
+  --quantum-bg: #f9fafb;
+}
+
+/* Core Layout */
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background: linear-gradient(135deg, var(--bg-main), var(--bg-alt));
+  color: var(--text-color);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Layout */
+.chat-layout-container {
+  display: grid;
+  grid-template-columns: 180px 1fr 500px; /* adjusted width for summary panel */
+  gap: 24px;
+  padding: 20px;
+  width: 100%;
+  max-width: 1500px;
+  align-items: flex-start;
+  margin: 0 auto; /* center the whole layout */
+}
+
+
+
+.chat-window {
+  flex: 1 1 400px;
+  max-width: 500px;
+  height: 80vh;
+  margin-left: 40px;
+  display: flex;
+  flex-direction: column;
+  background: var(--panel-bg);
+  border: 1px solid #333;
+  border-radius: 16px;
+  box-shadow: 0 0 15px var(--box-glow);
+  overflow: hidden;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.messages::-webkit-scrollbar {
+  width: 6px;
+}
+.messages::-webkit-scrollbar-thumb {
+  background: var(--box-glow);
+  border-radius: 6px;
+}
+
+/* Bubbles */
+.message-bubble {
+  max-width: 70%;
+  margin: 8px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 1rem;
+  line-height: 1.4;
+  word-wrap: break-word;
+  box-shadow: 0 0 6px rgba(0, 255, 255, 0.3);
+  animation: slideFadeIn 0.3s ease;
+}
+
+.message-sent {
+  align-self: flex-end;
+  background: var(--bubble-sent);
+  color: #000;
+}
+
+.message-received {
+  align-self: flex-start;
+  background: var(--bubble-received);
+  color: var(--text-color);
+  border: 1px solid #444;
+}
+
+.sender-label {
+  font-weight: bold;
+  margin-right: 6px;
+  color: var(--sender-color);
+}
+
+/* Input */
+.input-container {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  background: #0f172a;
+  border-top: 1px solid #1e293b;
+}
+
+.message-input {
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 24px;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  transition: background 0.3s ease;
+}
+
+.message-input:focus {
+  background-color: var(--input-focus-bg);
+}
+
+.message-input-field {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 24px;
+  border: none;
+  font-size: 15px;
+  background-color: #181828;
+  color: var(--text-color);
+  outline: none;
+  margin-right: 12px;
+  box-shadow: inset 0 0 5px var(--box-glow);
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 6px #00ffe0, 0 0 12px #00ffe0;
+  }
+  to {
+    text-shadow: 0 0 12px #00ffe0, 0 0 20px #00ffe0;
+  }
+}
+
+/* Button */
+.send-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 24px;
+  background: var(--button-bg);
+  color: #000;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 8px var(--box-glow);
+}
+
+.send-button:hover {
+  background: var(--button-hover);
+  box-shadow: 0 0 12px var(--box-glow);
+}
+
+/* Toggle User */
+.user-toggle {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--sender-color);
+}
+
+/* Quantum Simulation */
+.quantum-summary-panel {
+  flex: 0 0 500px;       /* Fixed width, much wider */
+  max-width: 500px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 80vh;
+  background: var(--quantum-bg);
+  border: 2px solid var(--box-glow);
+  border-radius: 12px;
+  padding: 24px;
+  font-family: "Courier New", monospace;
+  font-size: 1rem;       /* Slightly larger font */
+  color: #d1faff;
+  padding-left: 34px;
+  box-shadow: 0 0 12px var(--box-glow);
+  white-space: pre-wrap;
+  animation: slideFadeIn 0.6s ease forwards;
+}
+
+
+.quantum-summary-panel h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  font-size: 1.1rem;
+  color: var(--box-glow);
+  text-shadow: 0 0 5px #00ffe0aa;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantum-summary-panel h3::before {
+  content: "🧬";
+}
+
+.quantum-summary-panel .highlight {
+  color: var(--highlight);
+  font-weight: bold;
+}
+
+.quantum-summary-panel .danger {
+  color: var(--danger);
+  font-weight: bold;
+}
+
+.quantum-summary-panel .success {
+  color: var(--success);
+  font-weight: bold;
+}
+
+/* Animation */
+@keyframes slideFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.qchat-logo {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: bold;
+  color: #00ffe0;
+  text-shadow:
+    0 0 5px #00ffe0,
+    0 0 10px #00ffe0aa,
+    0 0 20px #00ffe0aa;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 5px #00ffe0,
+      0 0 10px #00ffe0aa,
+      0 0 20px #00ffe0aa;
+  }
+  50% {
+    text-shadow:
+      0 0 10px #00ffe0,
+      0 0 20px #00ffe0,
+      0 0 30px #00ffe0;
+  }
+}
+
+@keyframes quantumTeleport {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotateX(90deg) translateY(20px);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotateX(0deg) translateY(0);
+    filter: blur(0);
+  }
+}
+
+.quantum-teleport {
+  animation: quantumTeleport 0.6s ease-out;
+}
+
+/* Shimmer effect for sent messages */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.transmission-complete-msg {
+  font-size: 1.3rem;
+  color: #00ffe0;
+  text-align: center;
+  margin-top: 2rem;
+  animation: glow 1.5s ease-in-out infinite alternate;
+}
+
+
+
+.message-sent {
+  position: relative;
+  animation: shimmer 2s linear infinite;
+  background: linear-gradient(
+    120deg,
+    #00f6ff 0%,
+    #2bffcb 40%,
+    #00f6ff 100%
+  );
+  background-size: 300% 100%;
+}
+
+/* Particle burst keyframes */
+@keyframes particle-burst {
+  0% {
+    opacity: 1;
+    transform: scale(0.8) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.5) translateY(-30px);
+  }
+}
+
+.particle-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.particle {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #0ff;
+  border-radius: 50%;
+  animation: particle-burst 0.6s ease-out forwards;
+}
+
+.qubit-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.qubit {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #0ff;
+  box-shadow: 0 0 10px #0ff;
+  animation: qubitBounce 1s ease-in-out infinite alternate;
+  opacity: 0.8;
+}
+
+.qubit-normal {
+  background: #0ff;
+  box-shadow: 0 0 10px #0ff;
+}
+
+.qubit-alert {
+  background: #ff4c4c;
+  box-shadow: 0 0 10px #ff4c4c;
+}
+
+@keyframes qubitBounce {
+  0% {
+    transform: translateY(0px) scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-12px) scale(1.2);
+    opacity: 1;
+  }
+}
+
+.quantum-panel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0px;
+  position: relative;
+}
+
+.qubit-left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 20px;
+  margin-left: 10px;
+}
+
+.qubit {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  animation: qubitPulse 2.5s ease-in-out forwards;
+  opacity: 0;
+}
+
+.qubit-normal {
+  background: radial-gradient(circle, #00ffe0, #0077ff);
+  box-shadow: 0 0 6px #00ffe0aa, 0 0 12px #0077ffaa;
+}
+
+.qubit-alert {
+  background: radial-gradient(circle, #ff0033, #ff9900);
+  box-shadow: 0 0 6px #ff0033aa, 0 0 12px #ff6600aa;
+}
+
+@keyframes qubitPulse {
+  0% {
+    transform: scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.5) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.3) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.qubit-animation-tunnel {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  justify-content: flex-start;
+  position: relative;
+  height: 40px;
+}
+
+.qubit-orb {
+  width: 20px;
+  height: 20px;
+  background: var(--box-glow);
+  border-radius: 50%;
+  animation: tunnelMove 1.8s ease forwards;
+  opacity: 0;
+}
+
+.qubit-orb::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  box-shadow: 0 0 6px 2px var(--box-glow);
+}
+
+@keyframes tunnelMove {
+  0% {
+    transform: translateX(0px) scale(0.8);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(200px) scale(1.1);
+    opacity: 0;
+  }
+}
+
+.qubit-glitch {
+  background: red;
+  box-shadow: 0 0 10px red, 0 0 20px red;
+}
+
+.qubit-placeholder {
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+}
+
+
+.qubit-visualizer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 180px;
+  min-height: 320px;
+  padding: 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 12px var(--box-glow);
+  color: var(--text-color);
+  backdrop-filter: blur(6px);
+}
+
+.qubit-animation-track {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: fadeIn 0.5s ease-in;
+}
+
+.stage {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.tunnel {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin: 10px 0;
+  flex-wrap: wrap;
+}
+
+.qubit {
+  font-size: 1.2rem;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: qubitTravel 1.5s forwards;
+}
+
+.qubit.glitch {
+  color: red;
+  animation: qubitTravel 1.5s forwards, glitchFlicker 0.3s infinite;
+}
+
+@keyframes qubitTravel {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes glitchFlicker {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
