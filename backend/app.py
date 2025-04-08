@@ -8,7 +8,11 @@ from flask_cors import CORS
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True, origins=["http://localhost:5173"])
+CORS(app, supports_credentials=True, origins=[
+    "http://localhost:5173",
+    "https://q-chat-seven.vercel.app"
+])
+
 
 #  Use threading async mode (eventlet doesn't play nice on Windows)
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode="threading")
