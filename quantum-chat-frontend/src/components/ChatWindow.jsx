@@ -34,7 +34,7 @@ const ChatWindow = ({ socket, incomingMessages }) => {
     sendSound.play();
 
     try {
-      const response = await fetch("http://localhost:5000/send-message", {
+      const response = await fetch("https://q-chat-5vjc.onrender.com/send-message", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
