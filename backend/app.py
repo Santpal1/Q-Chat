@@ -111,6 +111,31 @@ def send_message():
         return jsonify({"success": False, "error": str(e)}), 500
 
 
+# ⛓️ In-memory tracking of connected users
+connected_users = set()
+
+@socketio.on("user_joined")
+def handle_user_joined(data):
+    username = data.get("username")
+    if username:
+        connected_users.add(username)
+        emit("update_user_list", list(connected_users), broadcast=True)
+
+@socketio.on("disconnect")
+def handle_disconnect():
+    print("User disconnected")
+    # You can enhance this by tracking session ID to remove correct user
+    # For now, we'll skip removing from `connected_users` to keep it simple
+
+@socketio.on("typing")
+def handle_typing(data):
+    emit("typing", data, broadcast=True)
+
+@socketio.on("stop_typing")
+def handle_stop_typing(data):
+    emit("stop_typing", data, broadcast=True)
+
+
 
 #  Fetch chat history
 @app.route("/get-messages", methods=["GET"])

@@ -18,22 +18,26 @@
   --quantum-bg: #0d1117;
 }
 
-/* Light Mode (Toggle later via JS or class) */
 body.light {
-  --bg-main: #f3f4f6;
-  --bg-alt: #e5e7eb;
-  --panel-bg: #ffffff;
-  --text-color: #1e293b;
-  --bubble-sent: linear-gradient(135deg, #bae6fd, #7dd3fc);
-  --bubble-received: linear-gradient(135deg, #d1d5db, #9ca3af);
-  --input-bg: #e2e8f0;
-  --input-focus-bg: #cbd5e1;
+  --bg-main: #f5f7fa;               /* main background */
+  --bg-alt: #e2e8f0;                /* sidebar / dropdown background */
+  --panel-bg: #ffffff;              /* panels like chat or summary */
+  --text-color: #1e293b;            /* rich dark for strong readability */
+
+  --bubble-sent: linear-gradient(135deg, #d0f0fd, #7dd3fc); /* soft cyan */
+  --bubble-received: linear-gradient(135deg, #f0f4f8, #cbd5e1); /* soft gray */
+
+  --input-bg: #f1f5f9;
+  --input-focus-bg: #e2e8f0;
+
   --button-bg: linear-gradient(145deg, #38bdf8, #2563eb);
   --button-hover: linear-gradient(145deg, #0ea5e9, #1d4ed8);
-  --box-glow: #38bdf8;
-  --text-color: #0f172a;
-  --quantum-bg: #f9fafb;
+
+  --box-glow: rgba(56, 189, 248, 0.4); /* soft neon glow */
+  --quantum-bg: #ffffff;
 }
+
+
 
 /* Core Layout */
 body {
@@ -74,6 +78,54 @@ body {
   box-shadow: 0 0 15px var(--box-glow);
   overflow: hidden;
 }
+
+body.light .input-container {
+  background: var(--input-bg);
+  border-top: 1px solid var(--input-focus-bg);
+}
+body.light .message-received {
+  border: 1px solid #cbd5e1;
+}
+body.light .quantum-summary-panel {
+  color: #1e293b;
+}
+body.light .user-toggle select {
+  background-color: #e2e8f0;
+  color: #1e293b;
+  border: 1px solid #94a3b8;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+body.light .eve-controls {
+  background: rgba(255, 255, 255, 0.8);
+  color: #1e293b;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.15);
+}
+
+body.light .eve-controls input[type="checkbox"] {
+  accent-color: #2563eb;
+  box-shadow: 0 0 4px rgba(56, 189, 248, 0.3);
+}
+body.light .qchat-logo {
+  color: #2563eb;
+  text-shadow:
+    0 0 5px #38bdf8,
+    0 0 10px #38bdf8aa,
+    0 0 20px #38bdf8aa;
+}
+body.light .message-sent {
+  color: #1e293b;
+}
+body.light .chat-window {
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.15); /* soft aqua glow */
+  border: 1px solid rgba(100, 116, 139, 0.3);    /* soft blue-gray border */
+}
+
+body.light .quantum-summary-panel {
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+}
+
 
 .messages {
   flex: 1;

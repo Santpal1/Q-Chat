@@ -1,0 +1,6 @@
+qiskit
+flask
+flask_cors
+flask_socketio
+multiprocessing
+qiskit_aer

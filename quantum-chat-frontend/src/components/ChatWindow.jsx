@@ -20,6 +20,7 @@ const ChatWindow = ({ socket, incomingMessages }) => {
   const [simulation, setSimulation] = useState(null);
   const [showSummaryPanel, setShowSummaryPanel] = useState(false);
   const [evePresent, setEvePresent] = useState(false);
+  const [typingStatus, setTypingStatus] = useState("");
 
   const messagesEndRef = useRef(null);
 
@@ -76,6 +77,28 @@ const ChatWindow = ({ socket, incomingMessages }) => {
     (msg) =>
       msg.sender === user || msg.receiver === user || msg.receiver === "All"
   );
+
+  useEffect(() => {
+    socket.emit("user_joined", { username: user });
+  
+    socket.on("typing", (data) => {
+      if (data.username !== user) {
+        setTypingStatus(`${data.username} is typing...`);
+      }
+    });
+  
+    socket.on("stop_typing", (data) => {
+      if (data.username !== user) {
+        setTypingStatus("");
+      }
+    });
+  
+    return () => {
+      socket.off("typing");
+      socket.off("stop_typing");
+    };
+  }, [user]);
+  
 
   // Auto-scroll to bottom
   useEffect(() => {
