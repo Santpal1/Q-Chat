@@ -1,10 +1,11 @@
 from multiprocessing import Process, Queue
+from multiprocessing.queues import Empty
 from bb92_key_exchange import alice_send_bits, bob_receive_qubits
 from utils import string_to_bits, bits_to_string, xor_bits
 import random
 
 # ---------------------- Eve Logic ---------------------
-def eve_intercept_qubits(bits, alice_bases, chaos_level=0.7):
+def eve_intercept_qubits(bits, alice_bases, chaos_level=1.0):
     eve_bases = [random.randint(0, 1) for _ in range(len(bits))]
     intercepted_bits = []
 
@@ -79,7 +80,7 @@ def alice(q_send_to_eve, q_recv_key, q_recv_eve_result, q_send_to_bob, message, 
         })
 
 # ---------------------- Eve ---------------------
-def eve(q_recv_from_alice, q_send_to_bob, eve_present, chaos_level=0.7):
+def eve(q_recv_from_alice, q_send_to_bob, eve_present, chaos_level=1.0):
     bits, bases = q_recv_from_alice.get()
     if eve_present:
         tampered_bits = eve_intercept_qubits(bits, bases, chaos_level)
