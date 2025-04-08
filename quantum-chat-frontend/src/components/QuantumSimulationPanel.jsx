@@ -2,23 +2,24 @@ import { useEffect, useState } from "react";
 import "../index.css";
 import QubitAnimation from "./QubitAnimation";
 
-
 const QuantumSimulationPanel = ({ simulation }) => {
   const [showQubits, setShowQubits] = useState(false);
 
   if (!simulation) return null;
 
+  // Defensive destructuring with fallbacks
   const {
-    original_message,
-    encrypted_bits,
-    decrypted_message,
-    eve_detected,
-    sender,
-    receiver
+    original_message = "",
+    encrypted_bits = "",
+    decrypted_message = "",
+    eve_detected = false,
+    sender = "Unknown",
+    receiver = "Unknown"
   } = simulation;
 
+  // Safe encrypted bits slicing
   const shortBits =
-    encrypted_bits.length > 20
+    encrypted_bits && encrypted_bits.length > 20
       ? encrypted_bits.slice(0, 20) + "..."
       : encrypted_bits;
 
@@ -30,11 +31,14 @@ const QuantumSimulationPanel = ({ simulation }) => {
 
   return (
     <div className="quantum-panel-container">
-      
-
-      <div className="quantum-summary-panel">
+      <div className={`quantum-summary-panel ${eve_detected ? "eve-alert" : ""}`}>
         <h3>🧬 Quantum Transmission Summary</h3>
-        <QubitAnimation originalMessage={original_message} eveDetected={eve_detected} />
+
+        <QubitAnimation
+          originalMessage={original_message}
+          eveDetected={eve_detected}
+        />
+
         <p><strong>Sender:</strong> {sender}</p>
         <p><strong>Receiver:</strong> {receiver}</p>
         <p><strong>Original Message:</strong> {original_message}</p>

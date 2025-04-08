@@ -11,6 +11,8 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "quantum_chat": "file:"
+    "concurrently": "^9.1.2",
+    "quantum_chat": "file:",
+    "socket.io-client": "^4.8.1"
   }
 }

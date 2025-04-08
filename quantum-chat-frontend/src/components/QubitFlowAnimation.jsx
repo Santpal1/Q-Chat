@@ -21,7 +21,7 @@ const QubitFlowAnimation = ({ simulation, active, onAnimationComplete }) => {
           <div className="stage sender">👤 {simulation.sender}</div>
           <div className="stage encrypt">🔒 Encrypting</div>
           <div className="tunnel">
-            {[...simulation.original_message].map((char, i) => (
+            {[...(simulation.original_message || "")].map((char, i) => (
               <div
                 key={i}
                 className={`qubit ${simulation.eve_detected ? "glitch" : ""}`}

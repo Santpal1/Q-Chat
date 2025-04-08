@@ -154,10 +154,16 @@ def run_quantum_chat(message, eve_present=False, chaos_level=0.9):
     p_eve.join()
     p_bob.join()
 
-    result = q_result.get() if not q_result.empty() else {"decrypted": "No message received from Bob.", "eve_detected": False}
-    debug = q_debug.get() if not q_debug.empty() else {"original": message, "encrypted": []}
-    
-    # Merge debug info into result
+    try:
+        result = q_result.get(timeout=1)
+    except Empty:
+        result = {"decrypted": "No message received from Bob.", "eve_detected": False}
+
+    try:
+        debug = q_debug.get(timeout=1)
+    except Empty:
+        debug = {"original": message, "encrypted": []}
+
     return {
         "original": debug["original"],
         "encrypted": debug["encrypted"],

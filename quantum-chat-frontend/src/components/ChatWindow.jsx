@@ -1,13 +1,13 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import MessageInput from "./MessageInput";
 import MessageBubble from "./MessageBubble";
 import QuantumSimulationPanel from "./QuantumSimulationPanel";
-import QubitFlowAnimation from "./QubitFlowAnimation"; // <- Handles animation
+import QubitFlowAnimation from "./QubitFlowAnimation";
 
 const sendSound = new Audio("/sounds/recieve.mp3");
 const receiveSound = new Audio("/sounds/recieve.mp3");
 
-const ChatWindow = () => {
+const ChatWindow = ({ socket, incomingMessages }) => {
   const [messages, setMessages] = useState([
     {
       text: "Welcome to Quantum Chat ⚛️",
@@ -18,7 +18,10 @@ const ChatWindow = () => {
 
   const [user, setUser] = useState("Alice");
   const [simulation, setSimulation] = useState(null);
-  const [showSummaryPanel, setShowSummaryPanel] = useState(false); // 👈 track when animation completes
+  const [showSummaryPanel, setShowSummaryPanel] = useState(false);
+  const [evePresent, setEvePresent] = useState(false);
+
+  const messagesEndRef = useRef(null);
 
   const sendMessage = async (userText) => {
     const receiver = user === "Alice" ? "Bob" : "Alice";
@@ -37,37 +40,23 @@ const ChatWindow = () => {
           sender: user,
           receiver,
           message: userText,
-          eve_present: false,
+          eve_present: evePresent,
           chaos_level: 0.9
         })
       });
 
       const data = await response.json();
 
-      if (data.success) {
-        if (data.sender === user) {
-          setSimulation({
-            sender: data.sender,
-            receiver: data.receiver,
-            original_message: data.original_message,
-            encrypted_bits: data.encrypted_bits,
-            decrypted_message: data.decrypted_message,
-            eve_detected: data.eve_detected
-          });
-          setShowSummaryPanel(false); // reset animation and summary panel
-        }
-
-        if (data.receiver === user) {
-          setMessages((prev) => [
-            ...prev,
-            {
-              text: data.decrypted_message,
-              sender: data.sender,
-              receiver: data.receiver
-            }
-          ]);
-          receiveSound.play();
-        }
+      if (data.success && data.sender === user) {
+        setSimulation({
+          sender: data.sender,
+          receiver: data.receiver,
+          original_message: data.original_message,
+          encrypted_bits: data.encrypted_bits,
+          decrypted_message: data.decrypted_message,
+          eve_detected: data.eve_detected
+        });
+        setShowSummaryPanel(false);
       }
 
     } catch (error) {
@@ -88,10 +77,45 @@ const ChatWindow = () => {
       msg.sender === user || msg.receiver === user || msg.receiver === "All"
   );
 
+  // Auto-scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [visibleMessages]);
+
+  // ✅ Use socket messages passed from App
+  useEffect(() => {
+    if (incomingMessages.length === 0) return;
+  
+    const latest = incomingMessages[incomingMessages.length - 1];
+  
+    if (latest.receiver === user) {
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: latest.decrypted_message,
+          sender: latest.sender,
+          receiver: latest.receiver
+        }
+      ]);
+  
+      receiveSound.play(); // 🔊 sound effect
+  
+      setSimulation({
+        sender: latest.sender,
+        receiver: latest.receiver,
+        original_message: latest.original_message,
+        encrypted_bits: latest.encrypted_bits,
+        decrypted_message: latest.decrypted_message,
+        eve_detected: latest.eve_detected
+      });
+  
+      setShowSummaryPanel(false); // 🧬 hide old panel
+    }
+  }, [incomingMessages]);
+  
   return (
     <div className="chat-layout-container">
-
-      {/* 🔄 Qubit Animation Panel */}
+      {/* Qubit Animation Panel */}
       <div className="left-panel">
         {!showSummaryPanel && simulation ? (
           <QubitFlowAnimation
@@ -101,14 +125,14 @@ const ChatWindow = () => {
           />
         ) : simulation ? (
           <div className="transmission-complete-msg">
-            🚀 Transmission Completed
+            Transmission Completed
           </div>
         ) : (
           <div className="qubit-placeholder" />
         )}
       </div>
 
-      {/* 💬 Main Chat */}
+      {/* Main Chat */}
       <div className="chat-window">
         <div className="user-toggle">
           <span>Current User:</span>
@@ -116,6 +140,18 @@ const ChatWindow = () => {
             <option value="Alice">Alice</option>
             <option value="Bob">Bob</option>
           </select>
+        </div>
+
+        {/* Eve Toggle */}
+        <div className="eve-controls">
+          <label>
+            <input
+              type="checkbox"
+              checked={evePresent}
+              onChange={(e) => setEvePresent(e.target.checked)}
+            />
+            Eavesdropper Present
+          </label>
         </div>
 
         <div className="messages">
@@ -127,12 +163,13 @@ const ChatWindow = () => {
               currentUser={user}
             />
           ))}
+          <div ref={messagesEndRef} />
         </div>
 
         <MessageInput onSend={sendMessage} />
       </div>
 
-      {/* 🧾 Summary Panel */}
+      {/* Summary Panel */}
       {simulation && showSummaryPanel && (
         <div className="quantum-summary-panel">
           <QuantumSimulationPanel simulation={simulation} />

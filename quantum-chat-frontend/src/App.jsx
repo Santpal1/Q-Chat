@@ -1,26 +1,45 @@
 import { useState, useEffect } from 'react';
 import ChatWindow from './components/ChatWindow';
 import './index.css';
+import { io } from 'socket.io-client';
+
+const socket = io("http://localhost:5000"); // Adjust if hosted elsewhere
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
+  const [incomingMessages, setIncomingMessages] = useState([]);
+  const [simulation, setSimulation] = useState(null);
 
-  // Toggle theme
   const toggleTheme = () => {
     setIsDarkMode(prev => !prev);
   };
 
-  // Apply class to body based on theme
+  useEffect(() => {
+    socket.on("connect", () => console.log("✅ Connected", socket.id));
+    socket.on("disconnect", () => console.log("❌ Disconnected"));
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("receive_message", (data) => {
+      console.log("🔁 Socket received:", data); // 🔍 Debug
+      setIncomingMessages((prev) => [...prev, data]);
+    });
+
+    return () => socket.off("receive_message");
+  }, []);
+
   useEffect(() => {
     document.body.classList.toggle('light', !isDarkMode);
   }, [isDarkMode]);
 
   return (
     <div className="app-container">
-      {/* Glowing Q-Chat Logo */}
       <div className="qchat-logo">Q-Chat</div>
 
-      {/* Theme toggle button */}
       <div style={{ position: 'absolute', top: 20, right: 20 }}>
         <button
           onClick={toggleTheme}
@@ -41,7 +60,12 @@ function App() {
         </button>
       </div>
 
-      <ChatWindow />
+      <ChatWindow
+        socket={socket}
+        incomingMessages={incomingMessages}
+        externalSimulation={simulation}
+        resetSimulation={() => setSimulation(null)}
+      />
     </div>
   );
 }
