@@ -3,7 +3,7 @@ import ChatWindow from './components/ChatWindow';
 import './index.css';
 import { io } from 'socket.io-client';
 
-const socket = io("http://localhost:5000"); // Adjust if hosted elsewhere
+const socket = io("https://q-chat-5vjc.onrender.com"); // Adjust if hosted elsewhere
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(true);
